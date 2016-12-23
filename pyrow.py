@@ -8,7 +8,9 @@
 import usb.core
 import usb.util
 from usb import USBError
-import csafe_cmd
+
+import PyRow.csafe_cmd as csafe_cmd
+
 import datetime
 import time
 import sys
@@ -37,9 +39,9 @@ class pyrow(object):
                 if erg.is_kernel_driver_active(INTERFACE):
                     erg.detach_kernel_driver(INTERFACE)
                 else:
-                    print "DEBUG: usb kernel driver not on " + sys.platform
+                    print("DEBUG: usb kernel driver not on " + sys.platform)
             except:
-                print "EXCEPTION"
+                print("EXCEPTION")
 
         #Claim interface (Needs Testing To See If Necessary)
         usb.util.claim_interface(erg, INTERFACE)
@@ -122,7 +124,7 @@ class pyrow(object):
         results = self.send(command)
 
         forceplot = {}
-        datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] / 2
+        datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] // 2
         forceplot['forceplot'] = results['CSAFE_PM_GET_FORCEPLOTDATA'][1:(datapoints+1)]
         forceplot['strokestate'] = results['CSAFE_PM_GET_STROKESTATE'][0]
 
