@@ -4,13 +4,11 @@
 #NOTE: This code has not been thoroughly tested and may not function as advertised.
 #   Please report and findings to the author so that they may be addressed in a stable release.
 
-# TODO: change print statments to proper errors
-
 import PyRow.csafe_dic as csafe_dic
 
 def __int2bytes(numbytes, integer):
     if not 0 <= integer <= 2 ** (8 * numbytes):
-        print("Integer is outside the allowable range")
+        raise Exception("Integer is outside the allowable range")
 
     byte = []
     for k in range(numbytes):
