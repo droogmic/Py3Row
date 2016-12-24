@@ -7,8 +7,8 @@
 #The program will record Time, Distance, SPM, Pace, and Force Data for each
 #stroke and save it to 'workout.csv'
 
-#NOTE: This code has not been thoroughly tested and may not function as advertised.
-#Please report and findings to the author so that they may be addressed in a stable release.
+# NOTE: This code has not been thoroughly tested and may not function as advertised.
+# Please report and findings to the author so that they may be addressed in a stable release.
 
 # import os
 # import sys
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     if len(ergs) == 0:
         exit("No ergs found.")
 
-    erg = pyrow.pyrow(ergs[0])
+    erg = pyrow.PyRow(ergs[0])
     print("Connected to erg.")
 
     #Open and prepare file

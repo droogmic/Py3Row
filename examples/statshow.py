@@ -6,8 +6,8 @@
 #Have the rowing machine on and plugged into the computer before starting the program
 #The program will display any changes to the machine status, stroke state, or workout state
 
-#NOTE: This code has not been thoroughly tested and may not function as advertised.
-#Please report and findings to the author so that they may be addressed in a stable release.
+# NOTE: This code has not been thoroughly tested and may not function as advertised.
+# Please report and findings to the author so that they may be addressed in a stable release.
 
 # import os
 # import sys
@@ -21,7 +21,7 @@ if __name__ == '__main__':
     ergs = list(pyrow.find())
     if len(ergs) == 0:
         exit("No ergs found.")
-    erg = pyrow.pyrow(ergs[0])
+    erg = pyrow.PyRow(ergs[0])
     print("Connected to erg.")
 
     #Create a dictionary of the different status states
