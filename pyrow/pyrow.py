@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-#Copyright (c) 2011, Sam Gambrell
+#Copyright (c) 2011 Sam Gambrell, 2016-2017 Michael Droogleever
 #Licensed under the Simplified BSD License.
-#NOTE: This code has not been thoroughly tested and may not function as advertised.
-#   Please report and findings to the author so that they may be addressed in a stable release.
+
+# NOTE: This code has not been thoroughly tested and may not function as advertised.
+# Please report and findings to the author so that they may be addressed in a stable release.
 
 
 import usb.core
 import usb.util
 from usb import USBError
 
-import PyRow.csafe_cmd as csafe_cmd
+from pyrow.csafe import csafe_cmd
 
 import datetime
 import time

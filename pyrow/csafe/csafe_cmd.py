@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-#Copyright (c) 2011, Sam Gambrell
+#Copyright (c) 2011 Sam Gambrell, 2016-2017 Michael Droogleever
 #Licensed under the Simplified BSD License.
-#NOTE: This code has not been thoroughly tested and may not function as advertised.
-#   Please report and findings to the author so that they may be addressed in a stable release.
 
-import PyRow.csafe_dic as csafe_dic
+# NOTE: This code has not been thoroughly tested and may not function as advertised.
+# Please report and findings to the author so that they may be addressed in a stable release.
+
+from pyrow.csafe import csafe_dic
 
 def __int2bytes(numbytes, integer):
     if not 0 <= integer <= 2 ** (8 * numbytes):
-        raise Exception("Integer is outside the allowable range")
+        raise ValueError("Integer is outside the allowable range")
 
     byte = []
     for k in range(numbytes):

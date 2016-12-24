@@ -9,7 +9,11 @@
 #NOTE: This code has not been thoroughly tested and may not function as advertised.
 #Please report and findings to the author so that they may be addressed in a stable release.
 
-import pyrow
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('..'))
+from pyrow import pyrow
+
 import time
 
 if __name__ == '__main__':

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-#Copyright (c) 2011, Sam Gambrell
+#Copyright (c) 2011 Sam Gambrell
 #Licensed under the Simplified BSD License.
-#NOTE: This code has not been thoroughly tested and may not function as advertised.
+
+# NOTE: This code has not been thoroughly tested and may not function as advertised.
 # Please report and findings to the author so that they may be addressed in a stable release.
 
 #Unique Frame Flags
