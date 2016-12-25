@@ -5,6 +5,7 @@
 # NOTE: This code has not been thoroughly tested and may not function as advertised.
 # Please report and findings to the author so that they may be addressed in a stable release.
 
+from warnings import warn
 from pyrow.csafe import csafe_dic
 
 def __int2bytes(numbytes, integer):
@@ -127,7 +128,7 @@ def write(arguments):
 
     #check for frame size (96 bytes)
     if len(message) > 96:
-        print("Message is too long: " + len(message))
+        warn("Message is too long: " + len(message))
 
     #report IDs
     maxmessage = max(len(message) + 1, maxresponse)
@@ -142,9 +143,9 @@ def write(arguments):
         message.insert(0, 0x02)
         message += [0] * (121 - len(message))
         if maxresponse > 121:
-            print("Response may be too long to recieve.  Max possible length " + str(maxresponse))
+            warn("Response may be too long to recieve.  Max possible length " + str(maxresponse))
     else:
-        print("Message too long.  Message length " + str(len(message)))
+        warn("Message too long.  Message length " + str(len(message)))
         message = []
 
     return message
@@ -169,7 +170,7 @@ def __check_message(message):
 
     #checks checksum
     if checksum != 0:
-        print("Checksum error")
+        warn("Checksum error")
         return []
 
     #remove checksum from  end of message
@@ -193,7 +194,7 @@ def read(transmission):
     elif startflag == csafe_dic.Standard_Frame_Start_Flag:
         j = 2
     else:
-        print("No Start Flag found.")
+        warn("No Start Flag found.")
         return []
 
     while j < len(transmission):
@@ -204,7 +205,7 @@ def read(transmission):
         j += 1
 
     if not stopfound:
-        print("No Stop Flag found.")
+        warn("No Stop Flag found.")
         return []
 
     message = __check_message(message)
@@ -252,7 +253,7 @@ def read(transmission):
 
         #checking that the recieved data byte is the expected length, sanity check
         if abs(sum(msgprop[1])) != 0 and bytecount != abs(sum(msgprop[1])):
-            print("Warning: bytecount is an unexpected length")
+            warn("Warning: bytecount is an unexpected length")
 
         #extract values
         for numbytes in msgprop[1]:
