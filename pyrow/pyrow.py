@@ -5,6 +5,10 @@
 # NOTE: This code has not been thoroughly tested and may not function as advertised.
 # Please report and findings to the author so that they may be addressed in a stable release.
 
+"""
+pyrow.py
+Interface to concept2 indoor rower
+"""
 
 import usb.core
 import usb.util
@@ -21,6 +25,9 @@ MIN_FRAME_GAP = .050 #in seconds
 INTERFACE = 0
 
 def find():
+    """
+    Returns list of pyusb Devices which are ergs.
+    """
     ergs = usb.core.find(find_all=True, idVendor=C2_VENDOR_ID)
     if ergs is None:
         raise ValueError('Ergs not found')
@@ -40,9 +47,10 @@ class PyRow(object):
                 if erg.is_kernel_driver_active(INTERFACE):
                     erg.detach_kernel_driver(INTERFACE)
                 else:
-                    print("DEBUG: usb kernel driver not on " + sys.platform)
+                    from warnings import warn
+                    warn("DEBUG: usb kernel driver not on {}".format(sys.platform))
             except:
-                print("EXCEPTION")
+                raise
 
         #Claim interface (Needs Testing To See If Necessary)
         usb.util.claim_interface(erg, INTERFACE)
@@ -51,9 +59,12 @@ class PyRow(object):
         try:
             erg.set_configuration() #required to configure USB connection
             #Ubuntu Linux returns 'usb.core.USBError: Resource busy' but rest of code still works
-        except Exception as e:
-            if not isinstance(e, USBError):
-                raise e
+        except USBError:
+            pass
+        # except Exception as e:
+        #     if not isinstance(e, USBError):
+        #         raise e
+
         self.erg = erg
 
         configuration = erg[0]
@@ -78,7 +89,15 @@ class PyRow(object):
     def get_monitor(self, forceplot=False):
         """
         Returns values from the monitor that relate to the current workout,
-        optionally returns force plot data and stroke state
+        optionally returns force plot data and stroke state. (* required)
+        time: time in seconds
+        distance: distance in meters
+        spm: strokes per minute
+        power: power in watts
+        pace: seconds/500m
+        calhr: calories burned per hour
+        calories: calories burned
+        heartrate: heartrate
         """
 
         command = ['CSAFE_PM_GET_WORKTIME', 'CSAFE_PM_GET_WORKDISTANCE', 'CSAFE_GETCADENCE_CMD',
