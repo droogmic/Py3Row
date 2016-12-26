@@ -230,6 +230,13 @@ class PyRow(object):
         """
         If machine is in the ready state, function will set the
         workout and display the start workout screen
+        program: workout program 0 to 15
+        workout_time: workout time as a list, [hours, minutes, seconds]
+        distance: meters
+        split: seconds
+        pace: seconds
+        calpace: calories per second
+        powerpace: watts
         """
 
         self.send(['CSAFE_RESET_CMD'])
