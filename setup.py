@@ -7,6 +7,7 @@ setup(
     # scripts=['examples/statshow.py', 'examples/strokelog.py'],
 
     install_requires=['pyusb==1.0'],
+    python_requires='>=3.5',
 
     package_data={
     },
