@@ -1,52 +1,50 @@
-# PyRow
+# Py3Row
 
-*NOTE: This code has not been thoroughly tested and may not function as advertised.
-This documentation my contain mistakes or incomplete information.
-Please report and findings to the author so that they may be addressed in a stable release.*
+#### NOTE
++ This code may not function as advertised.
++ This documentation is incomplete
++ Please submit PRs to improve this
 
 ## ABOUT
-PyRow is python code that allows one to interact with a Concept 2 Rowing Ergometer PM3 or PM4 monitor using python.  PyRow sends and receives information from the Ergometer using csafe commands or built in functions (listed below).  The goal of PyRow is to allow for multiple platforms to have easy access to the Ergometer.
 
-For an explanation of the csafe commands please use the following documentation:
-- [Concept2 PM Communication Interface Definition](http://www.concept2.com/service/software/software-development-kit)
+### Code history
+Original Site: http://www.newhavenrowingclub.org/pyrow/
+Forked from: https://github.com/uvd/PyRow
 
+### Description
+PyRow is python3 code that allows one to interact with a Concept 2 Rowing Ergometer PM3, PM4 or PM5 monitor using python.  PyRow sends and receives information from the Ergometer using csafe commands or built in functions (listed below).  The goal of PyRow is to allow for multiple platforms to have easy access to the Ergometer.
 
-*Need to download the SDK to get the document*
-
-
+### CSAFE
+For an explanation of the csafe commands please use the documentation found in this software:
+- [Concept2 PM Communication Interface Definition](http://www.concept2.com/service/software/software-development-kit) (Need to download the SDK to get the document)
 - [Communications Specification for Fitness Equipment](http://www.fitlinxx.com/CSAFE/)
 
-
-Site: http://www.newhavenrowingclub.org/pyrow/
-
 ## LICENSE
-Copyright (c) 2011 - 2015, Sam Gambrell
+Copyright (c) 2011 - 2015 Sam Gambrell, 2016 - 2017 Michael Droogleever
 
 Licensed under the Simplified BSD License.
 
 
 ## REQUIREMENTS
-PyRow has been tested on an Ubuntu machine with the software versions listed below, PyRow should be able to work on any machine that can run Python & PyUSB but this has not been tested and confirmed.
+PyRow has not been widely tested but should be able to work on any machine that can run Python & PyUSB. This has not been tested and confirmed.
 
-- [Python](http://python.org/) (Tested with 2.7.2)
-- [libusb](http://www.libusb.org/)
+### Tested Configurations
 
-        sudo apt-get install libudev-dev libusb-dev python
-
-- [Walac's PyUSB](http://walac.github.io/pyusb)
-
-        git clone git@github.com:walac/pyusb.git
-        cd pyusb
-        sudo python setup.py install
-
-Other versions of the PyRow library have been tested on Windows.
+#### ArchLinux
+`# sudo pacman -S python python-pip libusb`
+or
+`# sudo pacman -S python libusb python-pyusb` (unstested)
+- [Python](http://python.org/) (Tested with 3.5.2)
+- [libusb](http://www.libusb.org/) (1.0.21-1 from core)
+- [Walac's PyUSB](http://walac.github.io/pyusb) (1.0.0)
 
 
 ## INSTALLING
-After the software has become stable the software will be packaged as a module.  For now copying `pyrow.py`, `csafe_cmd.py`, and `csafe_dic.py` into the same directory as your code will work.
++ After the software has become stable the software will be packaged as a module, you can try using `pip install -e git+https://github.com/droogmic/Py3Row.git#egg=pyrow`.  
++ For now copying he pyrow directory and importing will work.
 
 Include PyRow in your code with the following line of code:
-`import pyrow`
+`from pyrow import pyrow`
 
 
 ## RUNNING
