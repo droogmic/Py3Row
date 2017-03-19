@@ -62,8 +62,8 @@ class Erg(object):
                 print(e)
             time.sleep(self.rate)
 
-    def set_distance(distance):
-        erg.set_workout(distance=distance)
+    def set_workout(**kwargs):
+        erg.set_workout(**kwargs)
 
 class ErgManager(object):
 
@@ -72,7 +72,8 @@ class ErgManager(object):
 
     def __init__(self, pyrow, *, add_callback, update_callback, checker_rate=5):
         """
-        Sets up thread
+        Sets up erg manager
+        Creates threads for detecting ergs and getting their status'
         """
         self.pyrow = pyrow
 
@@ -94,14 +95,6 @@ class ErgManager(object):
         self.device_ergs = []
         self.pyrow_ergs = []
 
-        # while not exit_requested:
-        #     response = input("Please enter 0 to exit: \n")
-        #     try:
-        #         response = int(response)
-        #             exit_requested = True
-        #     except ValueError:
-        #         print("Invalid number")
-
     def stop(self):
         self.status_q.put(None)
         for pyerg in self.pyrow_ergs:
@@ -110,9 +103,9 @@ class ErgManager(object):
             for t in self.threads.values():
                 t.join()
 
-    def set_distance(self, distance=2000):
+    def set_distance(self, **kwargs):
         for pyerg in self.pyrow_ergs:
-            pyerg.set_distance(distance)
+            pyerg.set_workout(**kwargs)
 
     def erg_checker(self):
         while not self.exit_requested:
