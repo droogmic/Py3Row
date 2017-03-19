@@ -9,7 +9,7 @@ from pyrow import pyrow
 from pyrow.ergmanager import ErgManager
 
 def new_erg_callback(*args):
-    print("New ", *args)
+    print("New: ", *args)
 
 def update_erg_callback(*args):
     print("Update: ", *args)

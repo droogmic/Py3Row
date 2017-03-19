@@ -9,20 +9,6 @@ import threading
 import queue
 import time
 
-from usb import USBError
-
-#Create a dictionary of the different status states
-ERG_state = ['Error', 'Ready', 'Idle', 'Have ID', 'N/A', 'In Use',
-         'Pause', 'Finished', 'Manual', 'Offline']
-
-
-ERG_stroke = ['Wait for min speed', 'Wait for acceleration', 'Drive', 'Dwelling', 'Recovery']
-
-ERG_workout = ['Waiting begin', 'Workout row', 'Countdown pause', 'Interval rest',
-           'Work time inverval', 'Work distance interval', 'Rest end time', 'Rest end distance',
-           'Time end rest', 'Distance end rest', 'Workout end', 'Workout terminate',
-           'Workout logged', 'Workout rearm']
-
 
 class Erg(object):
     def __init__(self, pyrow, erg, status_q, rate=1):
@@ -56,23 +42,24 @@ class Erg(object):
         cworkout = -1
 
         while not self.exit_requested:
-            status = self.pyrow_erg.get_status()
-            monitor = self.pyrow_erg.get_monitor()
-            workout = self.pyrow_erg.get_workout()
-            if ERG_state[status['status']] != 'Ready':
-                print("status: ", status)
-                print("monitor: ", monitor)
-                print("workout: ", workout)
-                print("workout: ", ERG_state[workout['status']])
-                print("workout: ", ERG_workout[workout['state']])
-            if workout['state'] == 11:
-                print(f"Workout erg {erg_num} finished")
-            else:
-                s = {}
-                s['distance'] = monitor['distance']
-                s['pace'] = monitor['pace']
-                s['spm'] = monitor['spm']
-            self.status_q.put({'erg_repr': self.device_erg.__repr__(), 'status': s})
+            try:
+                status = self.pyrow_erg.get_status(pretty=True)
+                monitor = self.pyrow_erg.get_monitor(pretty=True)
+                workout = self.pyrow_erg.get_workout(pretty=True)
+                if ERG_state[status['status']] != 'Ready':
+                    print("status: ", status)
+                    print("monitor: ", monitor)
+                    print("workout: ", workout)
+                if workout['state'] == 11:
+                    print(f"Workout erg {erg_num} finished")
+                else:
+                    s = {}
+                    s['distance'] = monitor['distance']
+                    s['pace'] = monitor['pace']
+                    s['spm'] = monitor['spm']
+                self.status_q.put({'erg_repr': self.device_erg.__repr__(), 'status': s})
+            except ConnectionError as e:
+                print(e)
             time.sleep(self.rate)
 
     def set_distance(distance):
@@ -140,7 +127,7 @@ class ErgManager(object):
                         self.device_ergs.append(device_erg)
                         self.pyrow_ergs.append(Erg(self.pyrow, device_erg, self.status_q))
                         self.add_callback(self.pyrow_ergs[-1])
-            except USBError:
+            except ConnectionError:
                 pass
 
             time.sleep(self.checker_rate)
