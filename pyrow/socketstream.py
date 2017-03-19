@@ -11,10 +11,11 @@ from pyrow.ergmanager import ErgManager
 
 class ErgManagerSocketStream(ErgManager):
 
-    host = ''                 # Symbolic name meaning all available interfaces
-    port = 1347               # Arbitrary non-privileged port
+    def __init__(self, *args, **kwargs, host='', port='1347'):
 
-    def __init__(self, *args, **kwargs):
+        self.host = host    # Symbolic name meaning all available interfaces
+        self.port = port    # Arbitrary non-privileged port
+
         def new_update_callback(self, *args):
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 json_payload = json.dumps({
