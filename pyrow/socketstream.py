@@ -11,7 +11,7 @@ from pyrow.ergmanager import ErgManager
 
 class ErgManagerSocketStream(ErgManager):
 
-    def __init__(self, *args, **kwargs, host='', port='1347'):
+    def __init__(self, *args, host='', port='1347', **kwargs):
 
         self.host = host    # Symbolic name meaning all available interfaces
         self.port = port    # Arbitrary non-privileged port
