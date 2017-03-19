@@ -6,18 +6,24 @@
 # Please report and findings to the author so that they may be addressed in a stable release.
 
 from pyrow import pyrow
-from ergmanager import ErgManager
+from pyrow.ergmanager import ErgManager
 
-def new_erg_callback():
-    pass
+def new_erg_callback(*args):
+    print("New ", *args)
 
 def update_erg_callback(*args):
-    print(args)
+    print("Update: ", *args)
 
 def main():
     ergman = ErgManager(pyrow,
-                        new_callback=new_erg_callback, 
+                        add_callback=new_erg_callback,
                         update_callback=update_erg_callback)
+    while True:
+        a = input(str("Test-->"))
+        print(a, "was entered\n")
+        if a == '0':
+            break
+    ergman.stop()
 
-if __main__:
+if __name__ == "__main__":
     main()
