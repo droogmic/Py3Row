@@ -12,9 +12,6 @@ class TestPyRow(unittest.TestCase):
     def setUp(self):
         testpyrow_setUp(self, pyrow)
 
-    def test_noerror(self):
-        testpyrow_noerror(self, pyrow)
-
     def test_get_monitor(self):
         testpyrow_get_monitor(self, pyrow)
 

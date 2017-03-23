@@ -15,7 +15,7 @@ class ErgManager(object):
     device_ergs = []
     pyrow_ergs = []
 
-    def __init__(self, pyrow, *, add_callback, update_callback, checker_rate=5):
+    def __init__(self, pyrow, *, add_callback, update_callback, check_rate=5, update_rate=1):
         """
         Sets up erg manager
         Creates threads for detecting ergs and getting their status'
@@ -25,14 +25,15 @@ class ErgManager(object):
         self.add_callback = add_callback
         self.update_callback = update_callback
 
-        self.checker_rate = checker_rate
+        self.check_rate = check_rate
+        self.update_rate = update_rate
 
         self.status_q = queue.Queue()
         self.ergs_status = {}
         self.exit_requested = False
         self.threads = {
-            'erg_check': threading.Thread(target=self.erg_checker),
-            'status_get': threading.Thread(target=self.status_getter),
+            'erg_check': threading.Thread(target=self._erg_checker),
+            'status_get': threading.Thread(target=self._status_getter),
         }
         for t in self.threads.values():
             t.start()
@@ -52,7 +53,7 @@ class ErgManager(object):
         for pyerg in self.pyrow_ergs:
             pyerg.set_workout(**kwargs)
 
-    def erg_checker(self):
+    def _erg_checker(self):
         while not self.exit_requested:
             print("checking")
             try:
@@ -63,14 +64,16 @@ class ErgManager(object):
                 for device_erg in device_ergs:
                     if device_erg not in self.device_ergs:
                         self.device_ergs.append(device_erg)
-                        self.pyrow_ergs.append(Erg(self.pyrow, device_erg, self.status_q))
-                        self.add_callback(self.pyrow_ergs[-1])
+                        new_erg = Erg(self.pyrow, device_erg, self.status_q, rate=self.update_rate)
+                        self.pyrow_ergs.append(new_erg)
+                        print("new_erg: ",new_erg)
+                        self.add_callback(new_erg)
             except ConnectionError:
                 pass
 
-            time.sleep(self.checker_rate)
+            time.sleep(self.check_rate)
 
-    def status_getter(self):
+    def _status_getter(self):
         while not self.exit_requested:
             item = self.status_q.get()
             if item is None:
@@ -113,14 +116,14 @@ class Erg(object):
 
         while not self.exit_requested:
             try:
-                monitor = self.pyrow_erg.get_monitor(pretty=True)
-                workout = self.pyrow_erg.get_workout(pretty=True, forceplot=True)
-                erg = self.pyrow_erg.get_force_plot(pretty=True)
-                if ERG_state[monitor['status']] != 'Ready':
-                    print("status: ", status)
+                monitor = self.pyrow_erg.get_monitor(pretty=True, forceplot=True)
+                workout = self.pyrow_erg.get_workout(pretty=True)
+                erg = self.pyrow_erg.get_erg(pretty=True)
+                if monitor['status'] != 'Ready':
                     print("monitor: ", monitor)
+                    print("workout: ", workout)
                     print("erg: ", erg)
-                if workout['state'] == self.pyrow_erg.ERG_workoutstate[11]:
+                if workout['state'] == 'Workout end':
                     print("Workout erg {} finished".format(erg_num))
                 else:
                     s = {}

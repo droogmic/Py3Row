@@ -7,13 +7,10 @@ class TestFind(unittest.TestCase):
     def test_noerror(self):
         testfind_noerror(self, pyrow)
 
-
+@unittest.skipIf(len(list(pyrow.find()))==0, "Skipping tests, no ergs")
 class TestPyRow(unittest.TestCase):
     def setUp(self):
         testpyrow_setUp(self, pyrow)
-
-    def test_noerror(self):
-        testpyrow_noerror(self, pyrow)
 
     def test_get_monitor(self):
         testpyrow_get_monitor(self, pyrow)

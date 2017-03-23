@@ -3,20 +3,13 @@ def testfind_noerror(self, pyrow):
             ergs = pyrow.find()
         except Exception as e:
             self.fail("pyrow.find() raised the following exception unexpectedly: {}".format(e))
-        self.assertTrue(len(list(ergs))>0, "No ergs found")
 
 def testpyrow_setUp(self, pyrow):
     erg_list = list(pyrow.find())
     if len(erg_list) == 0:
-        self.fail("No ergs found")
-    self.erg = pyrow.PyRow(erg_list[0])
-
-def testpyrow_noerror(self, pyrow):
-    ergs = list(pyrow.find())
-    if len(ergs) == 0:
         self.fail("pyrow.find() returned no ergs")
     try:
-        erg = pyrow.PyRow(ergs[0])
+        self.erg = pyrow.PyRow(erg_list[0])
     except Exception as e:
         self.fail("pyrow.PyRow() raised the following exception unexpectedly: {}".format(e))
 

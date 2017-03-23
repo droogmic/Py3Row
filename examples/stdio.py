@@ -5,7 +5,7 @@
 # NOTE: This code has not been thoroughly tested and may not function as advertised.
 # Please report and findings to the author so that they may be addressed in a stable release.
 
-from pyrow import pyrow
+from pyrow import simpyrow as pyrow
 from pyrow.ergmanager import ErgManager
 
 PROMPT = "0 to exit-->"
