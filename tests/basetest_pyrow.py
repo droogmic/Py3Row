@@ -4,16 +4,16 @@ def testfind_noerror(self, pyrow):
         except Exception as e:
             self.fail("pyrow.find() raised the following exception unexpectedly: {}".format(e))
 
-def testpyrow_setUp(self, pyrow):
+def testpyerg_setUp(self, pyrow):
     erg_list = list(pyrow.find())
     if len(erg_list) == 0:
         self.fail("pyrow.find() returned no ergs")
     try:
-        self.erg = pyrow.PyRow(erg_list[0])
+        self.erg = pyrow.PyErg(erg_list[0])
     except Exception as e:
-        self.fail("pyrow.PyRow() raised the following exception unexpectedly: {}".format(e))
+        self.fail("pyrow.PyErg() raised the following exception unexpectedly: {}".format(e))
 
-def testpyrow_get_monitor(self, pyrow):
+def testpyerg_get_monitor(self, pyrow):
     default_keys = [
         'time', 'distance', 'spm', 'power',
         'pace', 'calhr',
@@ -34,7 +34,7 @@ def testpyrow_get_monitor(self, pyrow):
     for item in default_keys + forceplot_keys:
         self.assertIn(item, monitor)
 
-def testpyrow_get_forceplot(self, pyrow):
+def testpyerg_get_forceplot(self, pyrow):
     keys = [
         'forceplot', 'strokestate', 'status'
     ]
@@ -43,7 +43,7 @@ def testpyrow_get_forceplot(self, pyrow):
     for item in keys:
         self.assertIn(item, monitor)
 
-def testpyrow_get_workout(self, pyrow):
+def testpyerg_get_workout(self, pyrow):
     keys = [
         'userid', 'type', 'state', 'inttype', 'intcount', 'status'
     ]

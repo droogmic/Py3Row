@@ -8,18 +8,18 @@ class TestFind(unittest.TestCase):
         testfind_noerror(self, pyrow)
 
 
-class TestPyRow(unittest.TestCase):
+class TestPyErg(unittest.TestCase):
     def setUp(self):
-        testpyrow_setUp(self, pyrow)
+        testpyerg_setUp(self, pyrow)
 
     def test_get_monitor(self):
-        testpyrow_get_monitor(self, pyrow)
+        testpyerg_get_monitor(self, pyrow)
 
     def test_get_forceplot(self):
-        testpyrow_get_forceplot(self, pyrow)
+        testpyerg_get_forceplot(self, pyrow)
 
     def test_get_workout(self):
-        testpyrow_get_workout(self, pyrow)
+        testpyerg_get_workout(self, pyrow)
 
 if __name__ == '__main__':
     unittest.main()

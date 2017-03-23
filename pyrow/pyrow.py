@@ -132,7 +132,7 @@ def find():
     return ergs
 
 
-class PyRow(object):
+class PyErg(object):
 
     def __init__(self, erg):
         """

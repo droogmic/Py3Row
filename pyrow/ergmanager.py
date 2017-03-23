@@ -87,7 +87,7 @@ class Erg(object):
         self._pyrow = pyrow
 
         self._device = erg
-        self._pyerg = self._pyrow.PyRow(erg)
+        self._pyerg = self._pyrow.PyErg(erg)
 
         self.data = {}
         self._status_q = status_q

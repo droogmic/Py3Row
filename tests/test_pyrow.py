@@ -7,19 +7,20 @@ class TestFind(unittest.TestCase):
     def test_noerror(self):
         testfind_noerror(self, pyrow)
 
+
 @unittest.skipIf(len(list(pyrow.find()))==0, "Skipping tests, no ergs")
-class TestPyRow(unittest.TestCase):
+class TestPyErg(unittest.TestCase):
     def setUp(self):
-        testpyrow_setUp(self, pyrow)
+        testpyerg_setUp(self, pyrow)
 
     def test_get_monitor(self):
-        testpyrow_get_monitor(self, pyrow)
+        testpyerg_get_monitor(self, pyrow)
 
     def test_get_forceplot(self):
-        testpyrow_get_forceplot(self, pyrow)
+        testpyerg_get_forceplot(self, pyrow)
 
     def test_get_workout(self):
-        testpyrow_get_workout(self, pyrow)
+        testpyerg_get_workout(self, pyrow)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env pythons
 #Copyright (c) 2016-2017 Michael Droogleever
 #Licensed under the Simplified BSD License.
 
@@ -14,7 +14,7 @@ STATUS = 9
 def find(n=2):
     return range(0,n)
 
-class PyRow(object):
+class PyErg(object):
 
     def __init__(self, erg):
         """
