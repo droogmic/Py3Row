@@ -12,7 +12,7 @@ Original Site: http://www.newhavenrowingclub.org/pyrow/
 Forked from: https://github.com/uvd/PyRow
 
 ### Description
-PyRow is python3 code that allows one to interact with a Concept 2 Rowing Ergometer PM3, PM4 or PM5 monitor using python.  PyRow sends and receives information from the Ergometer using csafe commands or built in functions (listed below).  The goal of PyRow is to allow for multiple platforms to have easy access to the Ergometer.
+PyRow is python3 code that allows one to interact with a Concept2 Rowing Ergometer PM3, PM4 or PM5 monitor using python.  PyRow sends and receives information from the Ergometer using csafe commands or built in functions (listed below).  The goal of PyRow is to allow for multiple platforms to have easy access to the Ergometer.
 
 ### CSAFE
 For an explanation of the csafe commands please use the documentation found here:
@@ -22,18 +22,17 @@ For an explanation of the csafe commands please use the documentation found here
 - [Communications Specification for Fitness Equipment](http://www.fitlinxx.com/CSAFE/)
 
 ## LICENSE
-Copyright (c) 2011 - 2015 Sam Gambrell, 2016 - 2017 Michael Droogleever
-
+Copyright (c) 2011 - 2015, Sam Gambrell
+Copyright (c) 2016 - 2017, Michael Droogleever
 Licensed under the Simplified BSD License.
 
-
 ## REQUIREMENTS
-PyRow has not been widely tested but should be able to work on any machine that can run Python & PyUSB. This has not been tested and confirmed.
+Py3Row has not been widely tested but should be able to work on any machine that can run Python & PyUSB. This has not been tested and confirmed.
 
 ### Tested Configurations
 
 #### ArchLinux
-`# sudo pacman -S python python-pip libusb`
+`# sudo pacman -S python libusb`
 or
 `# sudo pacman -S python libusb python-pyusb` (unstested)
 - [Python](http://python.org/) (Tested with 3.5.2)
@@ -54,14 +53,14 @@ Include PyRow in your code with the following line of code:
 
 ---------------------------------------
 
-`pyrow.pyrow(erg)` - creates an object for communicating with the erg, erg is obtained from the pyrow.find() function
+`pyrow.PyErg(erg)` - creates an object for communicating with the erg, erg is obtained from the pyrow.find() function
  ex: creating a pyrow object from the first erg found
    ergs = pyrow.find()
    erg = pyrow.pyrow(ergs[0])
 
 ---------------------------------------
 
-`pyrow.pyrow.getStatus()` - returns status of machine as a number
+`pyrow.PyErg.get_status()` - returns status of machine as a number
   - 0 = 'Error'
   - 1 = 'Ready'
   - 2 = 'Idle'
@@ -75,7 +74,7 @@ Include PyRow in your code with the following line of code:
 
 ---------------------------------------
 
-`pyrow.pyrow.getMonitor(forceplot=False)` - returns data from the monitor in dictionary format, keys listed below with descriptions
+`pyrow.PyErg.get_monitor(forceplot=False)` - returns data from the monitor in dictionary format, keys listed below with descriptions
   - time = Monitor time in seconds
   - distance = Monitor distance in meters
   - spm = Strokes per Minute
@@ -91,14 +90,14 @@ Include PyRow in your code with the following line of code:
 
 ---------------------------------------
 
-`pyrow.pyrow.getForcePlot()` - returns force plot data and stroke state in dictionary format, keys listed below with descriptions
+`pyrow.PyErg.get_forceplot()` - returns force plot data and stroke state in dictionary format, keys listed below with descriptions
   - forceplot = Force Plot Data (array varying in length from 0 to 16)
   - strokestate = Stroke State
   - status = Machine status
 
 ---------------------------------------
 
-`pyrow.pyrow.getWorkout()` - returns data related to the overall workout in dictionary format, keys listed below with descriptions
+`pyrow.PyErg.get_workout()` - returns data related to the overall workout in dictionary format, keys listed below with descriptions
   - userid = User ID
   - type = Workout Type
   - state = Workout State
@@ -108,7 +107,7 @@ Include PyRow in your code with the following line of code:
 
 ---------------------------------------
 
-`pyrow.pyrow.getErg()` - returns non workout related data about the erg in dictionary format, keys listed below with descriptions
+`pyrow.PyErg.get_erg()` - returns non workout related data about the erg in dictionary format, keys listed below with descriptions
   - mfgid = Manufacturing ID
   - cid = CID
   - model = Erg Model
@@ -122,11 +121,11 @@ Include PyRow in your code with the following line of code:
 
 ---------------------------------------
 
-`pyrow.pyrow.setClock()` - sets the clock on the erg equal to the clock on the computer
+`pyrow.PyErg.set_clock()` - sets the clock on the erg equal to the clock on the computer
 
 ---------------------------------------
 
-`pyrow.pyrow.setWorkout()` - if machine is in the ready state function will set the workout and display the start workout screen, allowable parameters are listed below (the current PM SDK does not allow for setting invervaled workouts)
+`pyrow.PyErg.set_workout()` - if machine is in the ready state function will set the workout and display the start workout screen, allowable parameters are listed below (the current PM SDK does not allow for setting invervaled workouts)
 
 **Choose one**
 
@@ -150,11 +149,11 @@ Include PyRow in your code with the following line of code:
 
  ex: set a 2000m workout with a 500m split and a pace boat with a 2 minute pace (120 seconds)
 
-  `erg.setWorkout(distance=2000, split=500, pace=120)`
+  `erg.set_workout(distance=2000, split=500, pace=120)`
 
 ---------------------------------------
 
-`pyrow.pyrow.send(command)` - sends a csafe command to the rowing machine and returns the result. The command is an array and
+`pyrow.PyErg.send(command)` - sends a csafe command to the rowing machine and returns the result. The command is an array and
  results are returned as a dictionary with the key being the csafe command name
 
  ex: setting a workout of 10 minutes with a split of 1 minute (60 seconds)
@@ -166,16 +165,25 @@ Include PyRow in your code with the following line of code:
 
     command = ['CSAFE_GETPACE_CMD',]
     result = erg.send(command)
-    print "Stroke Pace = " + str(result['CSAFE_GETPACE_CMD'][0])
-    print "Stroke Units = " + str(result['CSAFE_GETPACE_CMD'][1])
+    print("Stroke Pace = " + str(result['CSAFE_GETPACE_CMD'][0]))
+    print("Stroke Units = " + str(result['CSAFE_GETPACE_CMD'][1]))
 
 ## FILES
-`strokelog.py` - an example program that records time, distance, strokes per min, pace, and force plot data for each stroke to a csv file
 
-`statshow.py` - an example program that displays the current machine, workout, and stroke status
+`pyrow`
++ `pyrow.py` - file to be loaded by user, used to connect to erg and send/receive data on a low-level
++ `simpyrow.py` - file to be loaded by user, used to simulate erg communication on a low-level
++ `ergmanager.py` - file to be loaded by user, used to connect to erg and send/receive data on a high-level
++ `csafe`
+  - `csafe_cmd.py` - converts between csafe commands and byte arrays for pyrow.py, user does not need to load this file directly
+  - `csafe_dic.py` - contains dictionaries of the csafe commands to be used by csafe_cmd.py, user does not need to load this file directly
 
-`pyrow.py` - file to be loaded by user, used to connect to erg and send/receive data
+`tests` - contains unittests
 
-`csafe_cmd.py` - converts between csafe commands and byte arrays for pyrow.py, user does not need to load this file directly
-
-`csafe_dic.py` - contains dictionaries of the csafe commands to be used by csafe_cmd.py, user does not need to load this file directly
+`examples`
++ `stdio.py` - User I/O demo
++ `socketstream.py`
++ `socketstreamer.py`
++ `superceded`
+  - `strokelog.py` - an example program that records time, distance, strokes per min, pace, and force plot data for each stroke to a csv file
+  - `statshow.py` - an example program that displays the current machine, workout, and stroke status

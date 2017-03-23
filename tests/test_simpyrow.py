@@ -1,6 +1,6 @@
 import unittest
 from tests.basetest_pyrow import *
-from pyrow import pyrow
+from pyrow import simpyrow as pyrow
 
 
 class TestFind(unittest.TestCase):
@@ -8,7 +8,6 @@ class TestFind(unittest.TestCase):
         testfind_noerror(self, pyrow)
 
 
-@unittest.skipIf(len(list(pyrow.find()))==0, "Skipping tests, no ergs")
 class TestPyErg(unittest.TestCase):
     def setUp(self):
         testpyerg_setUp(self, pyrow)
