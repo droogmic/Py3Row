@@ -24,11 +24,70 @@ C2_VENDOR_ID = 0x17a4
 MIN_FRAME_GAP = .050 #in seconds
 INTERFACE = 0
 
+# List of stroke states
+ERG_strokestate = [
+    'Wait for min speed',
+    'Wait for acceleration',
+    'Drive',
+    'Dwelling',
+    'Recovery',
+]
+
+# List of workout types
+ERG_workouttype = [
+    'Just Row / no splits',
+    'Just Row / splits',
+    'Fixed Distance / splits',
+    'Fixed Distance / no splits',
+    'Fixed Time / no splits',
+    'Fixed Time Interval',
+    'Fixed Distance Interval',
+    'Variable Interval',
+]
+
+# List of workout state
+ERG_workoutstate = [
+    'Waiting begin',
+    'Workout row',
+    'Countdown pause',
+    'Interval rest',
+    'Work time inverval',
+    'Work distance interval',
+    'Rest end time',
+    'Rest end distance',
+    'Time end rest',
+    'Distance end rest',
+    'Workout end',
+    'Workout terminate',
+    'Workout logged',
+    'Workout rearm'
+]
+
+# List of machine states
+ERG_machinestate = [
+    'Error',
+    'Ready',
+    'Idle',
+    'Have ID',
+    'N/A',
+    'In Use',
+    'Pause',
+    'Finished',
+    'Manual',
+    'Offline'
+]
+
+
 def find():
     """
     Returns list of pyusb Devices which are ergs.
     """
-    ergs = usb.core.find(find_all=True, idVendor=C2_VENDOR_ID)
+    try:
+        ergs = usb.core.find(find_all=True, idVendor=C2_VENDOR_ID)
+    # Checks for USBError 16: Resource busy
+    except USBError as e:
+        if e.errno != 16:
+            raise ConnectionRefusedError("USB busy")
     if ergs is None:
         raise ValueError('Ergs not found')
     return ergs
@@ -40,6 +99,7 @@ class PyRow(object):
         """
         Configures usb connection and sets erg value
         """
+        from warnings import warn
 
         if sys.platform != 'win32':
             try:
@@ -47,7 +107,6 @@ class PyRow(object):
                 if erg.is_kernel_driver_active(INTERFACE):
                     erg.detach_kernel_driver(INTERFACE)
                 else:
-                    from warnings import warn
                     warn("DEBUG: usb kernel driver not on {}".format(sys.platform))
             except:
                 raise
@@ -59,8 +118,8 @@ class PyRow(object):
         try:
             erg.set_configuration() #required to configure USB connection
             #Ubuntu Linux returns 'usb.core.USBError: Resource busy' but rest of code still works
-        except USBError:
-            pass
+        except USBError as e:
+            warn("DEBUG: usb error whilst setting configuration, {}".format(e))
         # except Exception as e:
         #     if not isinstance(e, USBError):
         #         raise e
@@ -86,7 +145,7 @@ class PyRow(object):
             raise ValueError(label + " outside of range")
         return True
 
-    def get_monitor(self, forceplot=False):
+    def get_monitor(self, forceplot=False, pretty=False):
         """
         Returns values from the monitor that relate to the current workout,
         optionally returns force plot data and stroke state. (* required)
@@ -98,6 +157,10 @@ class PyRow(object):
         calhr: calories burned per hour
         calories: calories burned
         heartrate: heartrate
+        if heartrate:
+            forceplot: force plot data
+            strokestate
+            status
         """
 
         command = ['CSAFE_PM_GET_WORKTIME', 'CSAFE_PM_GET_WORKDISTANCE', 'CSAFE_GETCADENCE_CMD',
@@ -130,12 +193,17 @@ class PyRow(object):
             datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] /2
             monitor['forceplot'] = results['CSAFE_PM_GET_FORCEPLOTDATA'][1:(datapoints+1)]
             monitor['strokestate'] = results['CSAFE_PM_GET_STROKESTATE'][0]
+            if pretty:
+                monitor['strokestate'] = ERG_strokestate[monitor['strokestate']]
+
 
         monitor['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
+        if pretty:
+            monitor['status'] = ERG_machinestate[monitor['status']]
 
         return monitor
 
-    def get_force_plot(self):
+    def get_force_plot(self, pretty=False):
         """
         Returns force plot data and stroke state
         """
@@ -147,13 +215,17 @@ class PyRow(object):
         datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] // 2
         forceplot['forceplot'] = results['CSAFE_PM_GET_FORCEPLOTDATA'][1:(datapoints+1)]
         forceplot['strokestate'] = results['CSAFE_PM_GET_STROKESTATE'][0]
+        if pretty:
+            forceplot['strokestate'] = ERG_strokestate[forceplot['strokestate']]
 
         forceplot['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
+        if pretty:
+            forceplot['status'] = ERG_machinestate[forceplot['status']]
 
         return forceplot
 
 
-    def get_workout(self):
+    def get_workout(self, pretty=False):
         """
         Returns overall workout data
         """
@@ -165,15 +237,21 @@ class PyRow(object):
         workoutdata = {}
         workoutdata['userid'] = results['CSAFE_GETID_CMD'][0]
         workoutdata['type'] = results['CSAFE_PM_GET_WORKOUTTYPE'][0]
+        if pretty:
+            workoutdata['type'] = ERG_workouttype[workoutdata['type']]
         workoutdata['state'] = results['CSAFE_PM_GET_WORKOUTSTATE'][0]
+        if pretty:
+            workoutdata['state'] = ERG_workoutstate[workoutdata['state']]
         workoutdata['inttype'] = results['CSAFE_PM_GET_INTERVALTYPE'][0]
         workoutdata['intcount'] = results['CSAFE_PM_GET_WORKOUTINTERVALCOUNT'][0]
 
         workoutdata['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
+        if pretty:
+            workoutdata['status'] = ERG_machinestate[workoutdata['status']]
 
         return workoutdata
 
-    def get_erg(self):
+    def get_erg(self, pretty=False):
         """
         Returns all erg data that is not related to the workout
         """
@@ -196,6 +274,8 @@ class PyRow(object):
         ergdata['mininterframe'] = results['CSAFE_GETCAPS_CMD'][2]
 
         ergdata['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
+        if pretty:
+            ergdata['status'] = ERG_machinestate[ergdata['status']]
 
         return ergdata
 
@@ -209,6 +289,8 @@ class PyRow(object):
 
         status = {}
         status['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
+        if pretty:
+            status['status'] = ERG_machinestate[status['status']]
 
         return status
 
@@ -316,7 +398,12 @@ class PyRow(object):
         #convert message to byte array
         csafe = csafe_cmd.write(message)
         #sends message to erg and records length of message
-        length = self.erg.write(self.outEndpoint, csafe, timeout=2000)
+        try:
+            length = self.erg.write(self.outEndpoint, csafe, timeout=2000)
+        # Checks for USBError 16: Resource busy
+        except USBError as e:
+            if e.errno != 19:
+                raise ConnectionError("USB device disconected")
         #records time when message was sent
         self.__lastsend = datetime.datetime.now()
 
