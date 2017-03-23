@@ -29,7 +29,6 @@ class ErgManager(object):
         self._devices = []
         self._pyergs = []
 
-        # self.ergs_status = {}
         self.exit_requested = False
         self._status_q = queue.Queue()
         self._threads = {
@@ -76,8 +75,7 @@ class ErgManager(object):
             item = self._status_q.get()
             if item is None:
                 break
-            # self.ergs_status[item['erg_repr']] = item['status']
-            self.update_callback(item['erg_repr'], item['status'])
+            self.update_callback(item)
             self._status_q.task_done()
 
 
@@ -116,23 +114,20 @@ class Erg(object):
             try:
                 monitor = self._pyerg.get_monitor(pretty=True, forceplot=True)
                 workout = self._pyerg.get_workout(pretty=True)
-                erg = self._pyerg.get_erg(pretty=True)
-                if monitor['status'] != 'Ready':
-                    pass
-                    # print("monitor: ", monitor)
-                    # print("workout: ", workout)
-                    # print("erg: ", erg)
+                # erg = self._pyerg.get_erg(pretty=True)
+                # print("monitor: ", monitor)
+                # print("workout: ", workout)
+                # print("erg: ", erg)
+                self.data.update(monitor)
+                self.data.update(workout)
                 if workout['state'] == 'Workout end':
                     print("Workout erg {} finished".format(erg_num))
-                else:
-                    s = {}
-                    s['distance'] = monitor['distance']
-                    s['pace'] = monitor['pace']
-                    s['spm'] = monitor['spm']
-                self._status_q.put({'erg_repr': self.__repr__(), 'status': s})
+                self._status_q.put(self)
+
             except ConnectionError as e:
                 # TODO: determine
                 print(e)
+
             time.sleep(self.rate)
 
     def set_workout(**kwargs):

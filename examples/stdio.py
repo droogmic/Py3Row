@@ -10,12 +10,12 @@ from pyrow.ergmanager import ErgManager
 
 PROMPT = "0 to exit-->"
 
-def new_erg_callback(*args):
-    print("New: ", *args)
+def new_erg_callback(erg):
+    print("New: {}".format(erg))
     print(PROMPT)
 
-def update_erg_callback(*args):
-    print("Update: ", *args)
+def update_erg_callback(erg):
+    print("Update {}: {}".format(erg, erg.data))
     print(PROMPT)
 
 def main():
