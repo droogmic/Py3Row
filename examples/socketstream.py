@@ -18,7 +18,7 @@ def send_socket(data_dict):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         json_payload = json.dumps(data_dict)
         s.connect((HOST, PORT))
-        s.sendall(json_payload)
+        s.sendall(json_payload.encode())
 
 def new_erg_callback(erg):
     send_socket(data_dict={

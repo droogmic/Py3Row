@@ -23,7 +23,7 @@ class ErgManagerSocketStream(ErgManager):
                     'data': args[1],
                 })
                 s.connect((self.host, self.port))
-                s.sendall(json_payload)
+                s.sendall(json_payload.encode())
             kwargs['update_callback'](*args)
 
         kwargs['update_callback'] = new_update_callback
