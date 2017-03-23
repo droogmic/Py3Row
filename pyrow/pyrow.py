@@ -24,59 +24,98 @@ C2_VENDOR_ID = 0x17a4
 MIN_FRAME_GAP = .050 #in seconds
 INTERFACE = 0
 
-# List of stroke states
-ERG_strokestate = [
-    'Wait for min speed',
-    'Wait for acceleration',
-    'Drive',
-    'Dwelling',
-    'Recovery',
-]
+ERG_MAPPING = {
+    # List of stroke states
+    'strokestate': [
+        'Wait for min speed',
+        'Wait for acceleration',
+        'Drive',
+        'Dwelling',
+        'Recovery',
+    ],
+    # List of workout types
+    'workouttype': [
+        'Just Row / no splits',
+        'Just Row / splits',
+        'Fixed Distance / splits',
+        'Fixed Distance / no splits',
+        'Fixed Time / no splits',
+        'Fixed Time Interval',
+        'Fixed Distance Interval',
+        'Variable Interval',
+    ],
+    # List of workout state
+    'workoutstate': [
+        'Waiting begin',
+        'Workout row',
+        'Countdown pause',
+        'Interval rest',
+        'Work time inverval',
+        'Work distance interval',
+        'Rest end time',
+        'Rest end distance',
+        'Time end rest',
+        'Distance end rest',
+        'Workout end',
+        'Workout terminate',
+        'Workout logged',
+        'Workout rearm'
+    ],
+    # List of workout types
+    'inttype': [
+        'Time',
+        'Distance',
+        'Rest',
+    ],
+    # List of display types
+    'displaytype': [
+        'Standard',
+        'Force/Velocity',
+        'Paceboat',
+        'Per Stroke',
+        'Simple',
+        'Target',
+    ],
+    # List of display units types
+    'displayunitstype': [
+        'Time/Meters',
+        'Pace',
+        'Watts',
+        'Calories',
+    ],
+    # List of machine states
+    'status': [
+        'Error',
+        'Ready',
+        'Idle',
+        'Have ID',
+        'N/A',
+        'In Use',
+        'Pause',
+        'Finished',
+        'Manual',
+        'Offline'
+    ]
+}
 
-# List of workout types
-ERG_workouttype = [
-    'Just Row / no splits',
-    'Just Row / splits',
-    'Fixed Distance / splits',
-    'Fixed Distance / no splits',
-    'Fixed Time / no splits',
-    'Fixed Time Interval',
-    'Fixed Distance Interval',
-    'Variable Interval',
-]
+def checkvalue(value, label, minimum, maximum):
+    """
+    Checks that value is an integer and within the specified range
+    """
+    if type(value) is not int:
+        raise TypeError(label)
+    if  not minimum <= value <= maximum:
+        raise ValueError(label + " outside of range")
+    return True
 
-# List of workout state
-ERG_workoutstate = [
-    'Waiting begin',
-    'Workout row',
-    'Countdown pause',
-    'Interval rest',
-    'Work time inverval',
-    'Work distance interval',
-    'Rest end time',
-    'Rest end distance',
-    'Time end rest',
-    'Distance end rest',
-    'Workout end',
-    'Workout terminate',
-    'Workout logged',
-    'Workout rearm'
-]
-
-# List of machine states
-ERG_machinestate = [
-    'Error',
-    'Ready',
-    'Idle',
-    'Have ID',
-    'N/A',
-    'In Use',
-    'Pause',
-    'Finished',
-    'Manual',
-    'Offline'
-]
-
+def get_pretty(data_dict, pretty):
+    """
+    Makes data_dict values pretty
+    """
+    for key in data_dict.keys():
+        if key in ERG_MAPPING:
+            data_dict[key] = ERG_MAPPING[key][data_dict[key]]
+    return data_dict
 
 def find():
     """
@@ -133,17 +172,9 @@ class PyRow(object):
 
         self.__lastsend = datetime.datetime.now()
 
-    @classmethod
-    def __checkvalue(cls, value, label, minimum, maximum):
-        """
-        Checks that value is an integer and within the specified range
-        """
-
-        if type(value) is not int:
-            raise TypeError(label)
-        if  not minimum <= value <= maximum:
-            raise ValueError(label + " outside of range")
-        return True
+    @staticmethod
+    def _checkvalue(*args, **kwargs):
+        return checkvalue(*args, **kwargs)
 
     def get_monitor(self, forceplot=False, pretty=False):
         """
@@ -157,10 +188,10 @@ class PyRow(object):
         calhr: calories burned per hour
         calories: calories burned
         heartrate: heartrate
+        status
         if heartrate:
             forceplot: force plot data
             strokestate
-            status
         """
 
         command = ['CSAFE_PM_GET_WORKTIME', 'CSAFE_PM_GET_WORKDISTANCE', 'CSAFE_GETCADENCE_CMD',
@@ -193,17 +224,13 @@ class PyRow(object):
             datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] /2
             monitor['forceplot'] = results['CSAFE_PM_GET_FORCEPLOTDATA'][1:(datapoints+1)]
             monitor['strokestate'] = results['CSAFE_PM_GET_STROKESTATE'][0]
-            if pretty:
-                monitor['strokestate'] = ERG_strokestate[monitor['strokestate']]
-
 
         monitor['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
-        if pretty:
-            monitor['status'] = ERG_machinestate[monitor['status']]
 
+        monitor = get_pretty(monitor, pretty)
         return monitor
 
-    def get_force_plot(self, pretty=False):
+    def get_forceplot(self, pretty=False):
         """
         Returns force plot data and stroke state
         """
@@ -215,13 +242,10 @@ class PyRow(object):
         datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] // 2
         forceplot['forceplot'] = results['CSAFE_PM_GET_FORCEPLOTDATA'][1:(datapoints+1)]
         forceplot['strokestate'] = results['CSAFE_PM_GET_STROKESTATE'][0]
-        if pretty:
-            forceplot['strokestate'] = ERG_strokestate[forceplot['strokestate']]
 
         forceplot['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
-        if pretty:
-            forceplot['status'] = ERG_machinestate[forceplot['status']]
 
+        forceplot = get_pretty(forceplot, pretty)
         return forceplot
 
 
@@ -237,18 +261,13 @@ class PyRow(object):
         workoutdata = {}
         workoutdata['userid'] = results['CSAFE_GETID_CMD'][0]
         workoutdata['type'] = results['CSAFE_PM_GET_WORKOUTTYPE'][0]
-        if pretty:
-            workoutdata['type'] = ERG_workouttype[workoutdata['type']]
         workoutdata['state'] = results['CSAFE_PM_GET_WORKOUTSTATE'][0]
-        if pretty:
-            workoutdata['state'] = ERG_workoutstate[workoutdata['state']]
         workoutdata['inttype'] = results['CSAFE_PM_GET_INTERVALTYPE'][0]
         workoutdata['intcount'] = results['CSAFE_PM_GET_WORKOUTINTERVALCOUNT'][0]
 
         workoutdata['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
-        if pretty:
-            workoutdata['status'] = ERG_machinestate[workoutdata['status']]
 
+        workoutdata = get_pretty(workoutdata, pretty)
         return workoutdata
 
     def get_erg(self, pretty=False):
@@ -274,32 +293,27 @@ class PyRow(object):
         ergdata['mininterframe'] = results['CSAFE_GETCAPS_CMD'][2]
 
         ergdata['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
-        if pretty:
-            ergdata['status'] = ERG_machinestate[ergdata['status']]
 
+        ergdata = get_pretty(ergdata, pretty)
         return ergdata
 
-    def get_status(self):
+    def get_status(self, pretty=False):
         """
         Returns the status of the erg
         """
-
         command = ['CSAFE_GETSTATUS_CMD', ]
         results = self.send(command)
 
         status = {}
         status['status'] = results['CSAFE_GETSTATUS_CMD'][0] & 0xF
-        if pretty:
-            status['status'] = ERG_machinestate[status['status']]
 
+        status = get_pretty(status, pretty)
         return status
-
 
     def set_clock(self):
         """
         Sets the erg clock to the computers current time and date
         """
-
         now = datetime.datetime.now() #Get current date and time
 
         command = ['CSAFE_SETTIME_CMD', now.hour, now.minute, now.second]
@@ -312,21 +326,22 @@ class PyRow(object):
         """
         If machine is in the ready state, function will set the
         workout and display the start workout screen
+        Choose one of:
         program: workout program 0 to 15
         workout_time: workout time as a list, [hours, minutes, seconds]
         distance: meters
-        split: seconds
+        If workout_time or distance, optional: split
+        One of the following for pace boat (optional):
         pace: seconds
-        calpace: calories per second
+        calpace: calories per hour
         powerpace: watts
         """
-
         self.send(['CSAFE_RESET_CMD'])
         command = []
 
         #Set Workout Goal
         if program != None:
-            self.__checkvalue(program, "Program", 0, 15)
+            self._checkvalue(program, "Program", 0, 15)
         elif workout_time != None:
             if len(workout_time) == 1:
                 #if only seconds in workout_time then pad minutes
@@ -334,9 +349,9 @@ class PyRow(object):
             if len(workout_time) == 2:
                 #if no hours in workout_time then pad hours
                 workout_time.insert(0, 0) #if no hours in workout_time then pad hours
-            self.__checkvalue(workout_time[0], "Time Hours", 0, 9)
-            self.__checkvalue(workout_time[1], "Time Minutes", 0, 59)
-            self.__checkvalue(workout_time[2], "Time Seconds", 0, 59)
+            self._checkvalue(workout_time[0], "Time Hours", 0, 9)
+            self._checkvalue(workout_time[1], "Time Minutes", 0, 59)
+            self._checkvalue(workout_time[2], "Time Seconds", 0, 59)
 
             if workout_time[0] == 0 and workout_time[1] == 0 and workout_time[2] < 20:
                 #checks if workout is < 20 seconds
@@ -346,7 +361,7 @@ class PyRow(object):
                             workout_time[1], workout_time[2]])
 
         elif distance != None:
-            self.__checkvalue(distance, "Distance", 100, 50000)
+            self._checkvalue(distance, "Distance", 100, 50000)
             command.extend(['CSAFE_SETHORIZONTAL_CMD', distance, 36]) #36 = meters
 
         #Set Split
@@ -357,11 +372,11 @@ class PyRow(object):
                 time_raw = workout_time[0]*3600+workout_time[1]*60+workout_time[2]
                 #split workout_time that will occur 30 workout_times (.01 sec)
                 minsplit = int(time_raw/30*100+0.5)
-                self.__checkvalue(split, "Split Time", max(2000, minsplit), time_raw*100)
+                self._checkvalue(split, "Split Time", max(2000, minsplit), time_raw*100)
                 command.extend(['CSAFE_PM_SET_SPLITDURATION', 0, split])
             elif distance != None and program == None:
                 minsplit = int(distance/30+0.5) #split distance that will occur 30 workout_times (m)
-                self.__checkvalue(split, "Split distance", max(100, minsplit), distance)
+                self._checkvalue(split, "Split distance", max(100, minsplit), distance)
                 command.extend(['CSAFE_PM_SET_SPLITDURATION', 128, split])
             else:
                 raise ValueError("Cannot set split for current goal")

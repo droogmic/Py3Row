@@ -1,6 +1,6 @@
 import unittest
 from tests.basetest_pyrow import *
-from pyrow import pyrow
+from pyrow import simpyrow as pyrow
 
 
 class TestFind(unittest.TestCase):

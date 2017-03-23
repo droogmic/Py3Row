@@ -113,15 +113,15 @@ class Erg(object):
 
         while not self.exit_requested:
             try:
-                status = self.pyrow_erg.get_status(pretty=True)
                 monitor = self.pyrow_erg.get_monitor(pretty=True)
-                workout = self.pyrow_erg.get_workout(pretty=True)
-                if ERG_state[status['status']] != 'Ready':
+                workout = self.pyrow_erg.get_workout(pretty=True, forceplot=True)
+                erg = self.pyrow_erg.get_force_plot(pretty=True)
+                if ERG_state[monitor['status']] != 'Ready':
                     print("status: ", status)
                     print("monitor: ", monitor)
-                    print("workout: ", workout)
-                if workout['state'] == 11:
-                    print(f"Workout erg {erg_num} finished")
+                    print("erg: ", erg)
+                if workout['state'] == self.pyrow_erg.ERG_workoutstate[11]:
+                    print("Workout erg {} finished".format(erg_num))
                 else:
                     s = {}
                     s['distance'] = monitor['distance']
