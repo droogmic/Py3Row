@@ -3,6 +3,7 @@ import time
 from pyrow.ergmanager import *
 from pyrow import simpyrow
 
+
 class TestErgManager(unittest.TestCase):
     def setUp(self):
         self.erg_count = 0

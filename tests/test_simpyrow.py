@@ -21,5 +21,6 @@ class TestPyErg(unittest.TestCase):
     def test_get_workout(self):
         testpyerg_get_workout(self, pyrow)
 
+
 if __name__ == '__main__':
     unittest.main()
