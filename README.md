@@ -1,5 +1,7 @@
 # Py3Row
 
+[![Build Status](https://travis-ci.org/droogmic/Py3Row.svg?branch=master)](https://travis-ci.org/droogmic/Py3Row)
+
 #### NOTE
 + This code may not function as advertised.
 + This documentation is incomplete
