@@ -5,20 +5,22 @@
 # NOTE: This code has not been thoroughly tested and may not function as advertised.
 # Please report and findings to the author so that they may be addressed in a stable release.
 
+# pylint: disable=C0103,R0912,R0913
+
 """
 pyrow.py
 Interface to concept2 indoor rower
 """
+
+import datetime
+import time
+import sys
 
 import usb.core
 import usb.util
 from usb import USBError
 
 from pyrow.csafe import csafe_cmd
-
-import datetime
-import time
-import sys
 
 C2_VENDOR_ID = 0x17a4
 MIN_FRAME_GAP = .050 #in seconds
@@ -102,7 +104,7 @@ def checkvalue(value, label, minimum, maximum):
     """
     Checks that value is an integer and within the specified range
     """
-    if type(value) is not int:
+    if not isinstance(value, int):
         raise TypeError(label)
     if  not minimum <= value <= maximum:
         raise ValueError(label + " outside of range")
@@ -112,10 +114,13 @@ def get_pretty(data_dict, pretty):
     """
     Makes data_dict values pretty
     """
-    for key in data_dict.keys():
-        if key in ERG_MAPPING:
-            data_dict[key] = ERG_MAPPING[key][data_dict[key]]
-    return data_dict
+    if pretty:
+        for key in data_dict.keys():
+            if key in ERG_MAPPING:
+                data_dict[key] = ERG_MAPPING[key][data_dict[key]]
+        return data_dict
+    else:
+        return data_dict
 
 def find():
     """
@@ -133,7 +138,9 @@ def find():
 
 
 class PyErg(object):
-
+    """
+    Manages low-level erg communication
+    """
     def __init__(self, erg):
         """
         Configures usb connection and sets erg value
@@ -321,7 +328,8 @@ class PyErg(object):
 
         self.send(command)
 
-    def set_workout(self, program=None, workout_time=None, distance=None, split=None,
+    def set_workout(self, program=None, workout_time=None, distance=None,
+                    split=None,
                     pace=None, calpace=None, powerpace=None):
         """
         If machine is in the ready state, function will set the
@@ -365,8 +373,8 @@ class PyErg(object):
             command.extend(['CSAFE_SETHORIZONTAL_CMD', distance, 36]) #36 = meters
 
         #Set Split
-        if split != None:
-            if workout_time != None and program == None:
+        if split is not None:
+            if workout_time is not None and program is None:
                 split = int(split*100)
                 #total workout workout_time (1 sec)
                 time_raw = workout_time[0]*3600+workout_time[1]*60+workout_time[2]
@@ -374,7 +382,7 @@ class PyErg(object):
                 minsplit = int(time_raw/30*100+0.5)
                 self._checkvalue(split, "Split Time", max(2000, minsplit), time_raw*100)
                 command.extend(['CSAFE_PM_SET_SPLITDURATION', 0, split])
-            elif distance != None and program == None:
+            elif distance is not None and program is None:
                 minsplit = int(distance/30+0.5) #split distance that will occur 30 workout_times (m)
                 self._checkvalue(split, "Split distance", max(100, minsplit), distance)
                 command.extend(['CSAFE_PM_SET_SPLITDURATION', 128, split])
@@ -383,14 +391,14 @@ class PyErg(object):
 
 
         #Set Pace
-        if pace != None:
+        if pace is not None:
             powerpace = int(round(2.8 / ((pace / 500.) ** 3)))
-        elif calpace != None:
+        elif calpace is not None:
             powerpace = int(round((calpace - 300.)/(4.0 * 0.8604)))
-        if powerpace != None:
+        if powerpace is not None:
             command.extend(['CSAFE_SETPOWER_CMD', powerpace, 88]) #88 = watts
 
-        if program == None:
+        if program is None:
             program = 0
 
         command.extend(['CSAFE_SETPROGRAM_CMD', program, 0, 'CSAFE_GOINUSE_CMD'])
