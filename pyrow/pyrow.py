@@ -117,10 +117,14 @@ def get_pretty(data_dict, pretty):
     if pretty:
         for key in data_dict.keys():
             if key in ERG_MAPPING:
-                data_dict[key] = ERG_MAPPING[key][data_dict[key]]
-        return data_dict
-    else:
-        return data_dict
+                try:
+                    data_dict[key] = ERG_MAPPING[key][data_dict[key]]
+                except IndexError:
+                    # TODO, find exceptions and patch into ERG_MAPPING,found:
+                    # inttype 255
+                    pass
+                    # print("IndexError")
+    return data_dict
 
 def find():
     """
@@ -228,7 +232,7 @@ class PyErg(object):
 
         if forceplot:
             #get amount of returned data in bytes
-            datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] /2
+            datapoints = results['CSAFE_PM_GET_FORCEPLOTDATA'][0] // 2
             monitor['forceplot'] = results['CSAFE_PM_GET_FORCEPLOTDATA'][1:(datapoints+1)]
             monitor['strokestate'] = results['CSAFE_PM_GET_STROKESTATE'][0]
 

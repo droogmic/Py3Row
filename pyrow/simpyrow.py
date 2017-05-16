@@ -1,4 +1,4 @@
-#!/usr/bin/env pythons
+#!/usr/bin/env python
 #Copyright (c) 2016-2017 Michael Droogleever
 #Licensed under the Simplified BSD License.
 
@@ -7,7 +7,9 @@
 import datetime
 import time
 
-from pyrow.pyrow import ERG_MAPPING, get_pretty
+import numpy as np
+
+from pyrow.pyrow import get_pretty
 
 STATUS = 9
 
@@ -22,6 +24,7 @@ class PyErg(object):
         """
         self.erg = erg
         self._start_time = time.time()
+        self._factor = np.random.normal(1, 0.02)
         self.__lastsend = datetime.datetime.now()
 
     @classmethod
@@ -52,15 +55,18 @@ class PyErg(object):
             forceplot: force plot data
             strokestate
         """
-        DIST_TO_TIME = 10
-        SPM = 20
+        SPM = 30
         POWER = 150
         CAL_TO_TIME = 1
 
+        VEL = lambda x: 4 + np.sin(np.pi*x) + 0.5*np.cos(np.pi*x/480) + 0.5*np.exp(-x/120) - 5*np.exp(-x/4)
+        VELOCITY = 5
+        DIST = lambda x: 40.3 + 4*x - 60*np.exp(-x/120) + 20*np.exp(-x/4) + 80*np.sin(np.pi*x/480) - 0.3*np.cos(np.pi*x)
+
         elapsed_time = round(time.time() - self._start_time,2)
         monitor = {}
-        monitor['time'] = elapsed_time
-        monitor['distance'] = round(DIST_TO_TIME * elapsed_time)
+        monitor['time'] = round(elapsed_time, 2)
+        monitor['distance'] = int(round(self._factor*DIST(elapsed_time)))
         monitor['spm'] = SPM
         #Rowing machine always returns power as Watts
         monitor['power'] = POWER
@@ -185,7 +191,7 @@ class PyErg(object):
 
         elif distance != None:
             self.__checkvalue(distance, "Distance", 100, 50000)
-            command.extend(['CSAFE_SETHORIZONTAL_CMD', distance, 36]) #36 = meters
+            # command.extend(['CSAFE_SETHORIZONTAL_CMD', distance, 36]) #36 = meters
 
         #Set Split
         if split != None:
@@ -223,4 +229,4 @@ class PyErg(object):
         # TODO
         # command.extend(['CSAFE_SETPROGRAM_CMD', program, 0, 'CSAFE_GOINUSE_CMD'])
 
-        self.send(command)
+        # self.send(command)
