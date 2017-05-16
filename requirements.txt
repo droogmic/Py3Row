@@ -5,7 +5,6 @@ mccabe==0.6.1
 numpy==1.12.1
 pep8==1.7.0
 pylint==1.6.5
--e git+git@github.com:droogmic/Py3Row.git@2b1a9897d7da9eef10a032e2a8dc37ad83a2474a#egg=pyrow
 pyusb==1.0.0
 six==1.10.0
 wrapt==1.10.10
