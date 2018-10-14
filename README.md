@@ -39,7 +39,7 @@ or
 `# sudo pacman -S python libusb python-pyusb` (unstested)
 - [Python](http://python.org/) (Tested with 3.5.2)
 - [libusb](http://www.libusb.org/) (1.0.21-1 from core)
-- [Walac's PyUSB](http://walac.github.io/pyusb) (1.0.0)
+- [Walac's PyUSB](https://github.com/walac/pyusb) (1.0.0)
 
 
 ## INSTALLING
