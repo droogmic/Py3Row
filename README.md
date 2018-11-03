@@ -39,8 +39,28 @@ or
 `# sudo pacman -S python libusb python-pyusb` (unstested)
 - [Python](http://python.org/) (Tested with 3.5.2)
 - [libusb](http://www.libusb.org/) (1.0.21-1 from core)
-- [Walac's PyUSB](https://github.com/walac/pyusb) (1.0.0)
+- [Walac's PyUSB](https://github.com/walac/pyusb) (1.0.0) or [PyUsb](https://github.com/pyusb/pyusb) (1.0.3) via pip install pyusb
 
+#### Linux and PyUSB Access denied (insufficient permissions)
+Sometimes the administration roles for python to access usb devices are too strict and pyusb generates the following error:
+- usb.core.USBError: [Errno 13] Access denied (insufficient permissions)
+
+When this occurs, use `lsusb` to see if the Concept2 device is found and what bus # and device # it is.  Once you have those two numbers run the udevadm command to get the specific information.  Follow this example:
+
+`lsusb`
+
+`...
+Bus 006 Device 045: ID 17a4:0001 Concept2 Performance Monitor 3...`
+
+note bus # and device # and then do the following:
+
+`udevadm info -a -p $(udevadm info -q path -n /dev/bus/usb/006/045)`
+
+This will show you the idVendor, idProduct and other information about the Performance Monitor. From this you can create a rule for that device in `/etc/udev/rules.d/10-local.rules` with the following line matching the information you get from udevadm.  You shouldn't have to change the idVendor but the idProduct might be different from this example.
+
+`SUBSYSTEMS=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="17a4", ATTRS{idProduct}=="0001", GROUP="plugdev", MODE="777"`
+
+Make sure your system has plugdev group and your userid is in the group too.
 
 ## INSTALLING
 + After the software has become stable the software will be packaged as a module, you can try using `pip install -e git+https://github.com/droogmic/Py3Row.git#egg=pyrow`.  
