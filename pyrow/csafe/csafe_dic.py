@@ -71,6 +71,9 @@ cmds['CSAFE_PM_SET_SPLITDURATION'] = [0x05, [1, 4], 0x1A] #Time(0)/Distance(128)
 cmds['CSAFE_PM_GET_FORCEPLOTDATA'] = [0x6B, [1,], 0x1A] #Block Length
 cmds['CSAFE_PM_SET_SCREENERRORMODE'] = [0x27, [1,], 0x1A] #Disable(0)/Enable(1)
 cmds['CSAFE_PM_GET_HEARTBEATDATA'] = [0x6C, [1,], 0x1A] #Block Length
+cmds['CSAFE_PM_GET_STROKESTATS'] = [0x6E, [0,], 0x1A] # <reserved> (use 0 for now)
+
+
 
 
 #resp[0xCmd_Id] = [COMMAND_NAME, [Bytes, ...]]
@@ -138,3 +141,4 @@ resp[0x1A6B] = ['CSAFE_PM_GET_FORCEPLOTDATA', [
 resp[0x1A27] = ['CSAFE_PM_SET_SCREENERRORMODE', [0,]]  #No variables returned !! double check
 resp[0x1A6C] = ['CSAFE_PM_GET_HEARTBEATDATA', [
     1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]] #Bytes read, data ...
+resp[0x1A6E] = ['CSAFE_PM_GET_STROKESTATS', [2,1,2,1,2,2,2,2,2]] # Stroke Distance (2 bytes), drive time (1 byte), recovery time (2 bytes), stroke length (one byte), stroke count (2 bytes), Stroke peak force (2bytes), Stroke Impulse Force (2 bytes), Stroke Average Force (2 bytes), Work per stroke (2 bytes)
