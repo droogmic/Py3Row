@@ -65,6 +65,7 @@ cmds['CSAFE_PM_GET_WORKOUTSTATE'] = [0x8D, [], 0x1A]
 cmds['CSAFE_PM_GET_WORKOUTINTERVALCOUNT'] = [0x9F, [], 0x1A]
 cmds['CSAFE_PM_GET_INTERVALTYPE'] = [0x8E, [], 0x1A]
 cmds['CSAFE_PM_GET_RESTTIME'] = [0xCF, [], 0x1A]
+cmds['CSAFE_PM_GET_DISPLAYUNITS'] = [0x8B, [], 0x1A]
 
 #PM3 Specific Long Commands
 cmds['CSAFE_PM_SET_SPLITDURATION'] = [0x05, [1, 4], 0x1A] #Time(0)/Distance(128), Duration
@@ -133,6 +134,7 @@ resp[0x1A8D] = ['CSAFE_PM_GET_WORKOUTSTATE', [1,]] #Workout State
 resp[0x1A9F] = ['CSAFE_PM_GET_WORKOUTINTERVALCOUNT', [1,]] #Workout Interval Count
 resp[0x1A8E] = ['CSAFE_PM_GET_INTERVALTYPE', [1,]] #Interval Type
 resp[0x1ACF] = ['CSAFE_PM_GET_RESTTIME', [2,]] #Rest Time
+cmds[0x1A8B] = ['CSAFE_PM_GET_DISPLAYUNITS', [1]] # Display Units Type
 
 #Response Data to PM3 Specific Long Commands
 resp[0x1A05] = ['CSAFE_PM_SET_SPLITDURATION', [0,]] #No variables returned !! double check
