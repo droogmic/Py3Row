@@ -21,7 +21,7 @@ if __name__ == '__main__':
     ergs = list(pyrow.find())
     if len(ergs) == 0:
         exit("No ergs found.")
-    erg = pyrow.PyRow(ergs[0])
+    erg = pyrow.PyErg(ergs[0])
     print("Connected to erg.")
 
     #Create a dictionary of the different status states
