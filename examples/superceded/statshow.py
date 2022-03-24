@@ -23,7 +23,7 @@ if __name__ == '__main__':
         print("Listing all USB devices found:")
         pyrow.find_all()
         exit("No ergs found.")
-    erg = pyrow.PyRow(ergs[0])
+    erg = pyrow.PyErg(ergs[0])
     print("Connected to erg.")
 
     #Create a dictionary of the different status states
