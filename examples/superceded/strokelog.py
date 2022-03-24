@@ -22,9 +22,10 @@ if __name__ == '__main__':
     #Connecting to erg
     ergs = list(pyrow.find())
     if len(ergs) == 0:
+        print("Listing all USB devices found:")
+        pyrow.find_all()
         exit("No ergs found.")
-
-    erg = pyrow.PyErg(ergs[0])
+    erg = pyrow.PyRow(ergs[0])
     print("Connected to erg.")
 
     #Open and prepare file

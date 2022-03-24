@@ -140,6 +140,15 @@ def find():
         raise ValueError('Ergs not found')
     return ergs
 
+def find_all():
+    """
+    Scans all usb devices and lists everything found to stdout
+    :return: nothing
+    """
+    dev = usb.core.find(find_all=True)
+    for cfg in dev:
+        sys.stdout.write(
+            'VendorID = 0x{:04X}'.format(cfg.idVendor) + ' :: ProductID = 0x{:04X}'.format(cfg.idProduct) + '\n')
 
 class PyErg(object):
     """
